@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warung Mama Gio - Pesan Online</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;800&family=Bangers&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #e63946; --secondary: #ffb703; --dark-blue: #1d3557; --light: #f1faee; --price-color: #f3722c; }
+        body { font-family: 'Poppins', sans-serif; margin: 0; background-color: var(--light); padding-bottom: 120px; }
+        header { position: relative; padding: 70px 20px; text-align: center; background: #000; overflow: hidden; border-bottom: 5px solid var(--secondary); }
+        .collage-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: grid; grid-template-columns: repeat(4, 1fr); z-index: 1; filter: brightness(0.5); opacity: 0.7; }
+        .collage-bg img { width: 100%; height: 100%; object-fit: cover; }
+        .header-content { position: relative; z-index: 2; }
+        .logo-text { font-family: 'Bangers', cursive; font-size: clamp(2.2rem, 7vw, 4rem); color: var(--secondary); text-shadow: 3px 3px var(--primary); margin: 0; }
+        .tagline { font-weight: bold; letter-spacing: 2px; margin-top: 10px; color: white; text-transform: uppercase; background: var(--primary); display: inline-block; padding: 6px 20px; border-radius: 50px; font-size: 0.9rem; }
+        
+        .container { padding: 30px 15px; max-width: 1200px; margin: auto; }
+        .section-title { text-align: center; font-family: 'Bangers'; font-size: 2.5rem; color: var(--dark-blue); margin-bottom: 25px; }
+        
+        .grid-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px; }
+        
+        /* REVISI: EFEK BOX-SHADOW MELAYANG & KLIK-ABLE */
+        .card { 
+            background: white; 
+            border-radius: 15px; 
+            padding: 15px; 
+            text-align: center; 
+            /* Shadow awal yang membuat kartu terlihat melayang */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+            border-bottom: 4px solid var(--secondary); 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            cursor: pointer;
+            position: relative;
+        }
+
+        /* Efek saat di-hover atau diklik (untuk mobile) */
+        .card:hover, .card:active { 
+            transform: translateY(-8px); /* Melayang lebih tinggi */
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3); /* Bayangan lebih dalam */
+        }
+
+        .title-area { min-height: 60px; display: flex; flex-direction: column; justify-content: center; width: 100%; margin-bottom: 10px; }
+        
+        .card h3 { 
+            color: var(--primary); 
+            font-family: 'Bangers'; 
+            font-size: 1.4rem; 
+            margin: 0; 
+            line-height: 1.2;
+            text-shadow: 1.5px 1.5px 0px rgba(0,0,0,0.1);
+        }
+        
+        .qty-label { font-size: 0.8rem; font-weight: 700; color: var(--dark-blue); }
+        .card p { font-size: 0.8rem; color: #666; margin: 0 0 10px 0; line-height: 1.3; min-height: 35px; }
+        .price-tag { font-weight: 800; font-size: 1.1rem; color: var(--price-color); margin-top: auto; margin-bottom: 10px; }
+        .centered-row { grid-column: 2 / span 2; display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+
+        @media (max-width: 768px) { .grid-container { grid-template-columns: repeat(2, 1fr); } .centered-row { grid-column: 1 / span 2; } }
+        @media (max-width: 480px) { .grid-container { grid-template-columns: 1fr; } .centered-row { grid-column: 1; grid-template-columns: 1fr; } }
+
+        .stepper { display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-step { background: var(--dark-blue); color: white; border: none; width: 35px; height: 35px; border-radius: 8px; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .counter { font-weight: 800; font-size: 1.1rem; min-width: 25px; }
+
+        .cart-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 15px 25px; box-shadow: 0 -10px 30px rgba(0,0,0,0.15); display: none; justify-content: space-between; align-items: center; z-index: 1000; border-top: 4px solid var(--secondary); }
+        .total-amount { font-size: 1.4rem; font-weight: 800; color: var(--primary); }
+        .btn-checkout { background: #25d366; color: white; border: none; padding: 12px 20px; border-radius: 12px; font-weight: 800; font-size: 1rem; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; padding: 15px; }
+        .modal-content { background: white; padding: 20px; border-radius: 25px; width: 100%; max-width: 350px; text-align: center; max-height: 90vh; overflow-y: auto; }
+        
+        .input-nama { width: 100%; padding: 12px; margin: 10px 0 15px 0; border: 2px solid #eee; border-radius: 12px; font-family: 'Poppins', sans-serif; font-size: 1rem; box-sizing: border-box; outline: none; }
+        
+        .order-summary { background: #f8f9fa; border-radius: 15px; padding: 15px; margin-bottom: 20px; text-align: left; border: 1px dashed #ccc; }
+        .order-summary h4 { margin: 0 0 10px 0; font-size: 0.9rem; color: var(--dark-blue); border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .order-item { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 5px; color: #444; }
+
+        .payment-option { display: block; width: 100%; box-sizing: border-box; padding: 12px; margin: 10px 0; border: 2px solid #eee; border-radius: 15px; cursor: pointer; font-weight: 800; color: var(--dark-blue); }
+        .payment-option.active { border-color: var(--primary); background: #fff1f2; color: var(--primary); }
+        
+        .qris-img { width: 100%; max-width: 220px; border-radius: 15px; margin: 15px 0; border: 3px solid var(--secondary); }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="collage-bg">
+            <img src="WhatsApp Image 2026-04-04 at 18.47.20.jpeg"><img src="WhatsApp Image 2026-04-04 at 18.57.04.jpeg">
+            <img src="WhatsApp Image 2026-04-04 at 18.57.29.jpeg"><img src="WhatsApp Image 2026-04-04 at 18.58.06.jpeg">
+        </div>
+        <div class="header-content">
+            <h1 class="logo-text">WARUNG MAMA GIO</h1>
+            <div class="tagline">CEMILAN HINGGA AKHIR JAMAN</div>
+        </div>
+    </header>
+
+    <div class="container">
+        <h2 class="section-title">BARISAN MENU JUARA</h2>
+        <div class="grid-container">
+            <div class="card"><div class="title-area"><h3>Cireng Ayam</h3></div><p>Ayamnya disuwir paksa, rasanya bikin lidah dansa.</p><div class="price-tag">Rp 1.500</div><div class="stepper"><button class="btn-step" onclick="updateQty('item1', -1)">-</button><span class="counter" id="qty-item1">0</span><button class="btn-step" onclick="updateQty('item1', 1)">+</button></div></div>
+            <div class="card"><div class="title-area"><h3>Cireng Cokelat</h3></div><p>Cireng isi cokelat, dimakan panas langsung tobat.</p><div class="price-tag">Rp 1.500</div><div class="stepper"><button class="btn-step" onclick="updateQty('item2', -1)">-</button><span class="counter" id="qty-item2">0</span><button class="btn-step" onclick="updateQty('item2', 1)">+</button></div></div>
+            <div class="card"><div class="title-area"><h3>Cireng Keju</h3></div><p>Kejunya lumer, pas digigit langsung pamer.</p><div class="price-tag">Rp 1.500</div><div class="stepper"><button class="btn-step" onclick="updateQty('item3', -1)">-</button><span class="counter" id="qty-item3">0</span><button class="btn-step" onclick="updateQty('item3', 1)">+</button></div></div>
+            <div class="card"><div class="title-area"><h3>Cireng Ayam</h3><span class="qty-label">(Isi 4 pcs)</span></div><p>Beli 4 langsung, buat yang perutnya gak santai.</p><div class="price-tag">Rp 5.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item4', -1)">-</button><span class="counter" id="qty-item4">0</span><button class="btn-step" onclick="updateQty('item4', 1)">+</button></div></div>
+            <div class="card"><div class="title-area"><h3>Cireng Cokelat</h3><span class="qty-label">(Isi 4 pcs)</span></div><p>Paket cokelat combo, biar manisnya gak jomblo.</p><div class="price-tag">Rp 5.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item5', -1)">-</button><span class="counter" id="qty-item5">0</span><button class="btn-step" onclick="updateQty('item5', 1)">+</button></div></div>
+            <div class="card"><div class="title-area"><h3>Cireng Keju</h3><span class="qty-label">(Isi 4 pcs)</span></div><p>Paket keju baris, kejunya melimpah gak pudar.</p><div class="price-tag">Rp 5.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item6', -1)">-</button><span class="counter" id="qty-item6">0</span><button class="btn-step" onclick="updateQty('item6', 1)">+</button></div></div>
+            <div class="card"><div class="title-area"><h3>Cireng Campur</h3><span class="qty-label">(Isi 4 pcs)</span></div><p>Buat yang labil, isinya semua rasa biar adil.</p><div class="price-tag">Rp 5.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item7', -1)">-</button><span class="counter" id="qty-item7">0</span><button class="btn-step" onclick="updateQty('item7', 1)">+</button></div></div>
+            <div class="card"><div class="title-area"><h3>Makaroni Ngehe</h3></div><p>Level 'Ngehe' Ori, pedasnya bikin lupa diri.</p><div class="price-tag">Rp 2.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item8', -1)">-</button><span class="counter" id="qty-item8">0</span><button class="btn-step" onclick="updateQty('item8', 1)">+</button></div></div>
+            <div class="card"><div class="title-area"><h3>Makaroni Ngehe</h3></div><p>Level upgrade, pedasnya makin gak ada obat.</p><div class="price-tag">Rp 3.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item9', -1)">-</button><span class="counter" id="qty-item9">0</span><button class="btn-step" onclick="updateQty('item9', 1)">+</button></div></div>
+            <div class="card"><div class="title-area"><h3>Makaroni Ngehe</h3></div><p>Paket 'Boss Besar', pedasnya bikin tobat sambal.</p><div class="price-tag">Rp 5.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item10', -1)">-</button><span class="counter" id="qty-item10">0</span><button class="btn-step" onclick="updateQty('item10', 1)">+</button></div></div>
+            <div class="card"><div class="title-area"><h3>Es Chocolatos</h3></div><p>Cokelatnya kental, dinginnya bikin mental.</p><div class="price-tag">Rp 1.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item11', -1)">-</button><span class="counter" id="qty-item11">0</span><button class="btn-step" onclick="updateQty('item11', 1)">+</button></div></div>
+            <div class="card"><div class="title-area"><h3>Es Goriorio</h3></div><p>Es biskuit legendaris, dinginnya bikin pusing.</p><div class="price-tag">Rp 1.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item12', -1)">-</button><span class="counter" id="qty-item12">0</span><button class="btn-step" onclick="updateQty('item12', 1)">+</button></div></div>
+
+            <div class="centered-row">
+                <div class="card"><div class="title-area"><h3>Air Mineral</h3></div><p>Air putih bersih, penetralisir lidah pedas Ngehe.</p><div class="price-tag">Rp 1.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item13', -1)">-</button><span class="counter" id="qty-item13">0</span><button class="btn-step" onclick="updateQty('item13', 1)">+</button></div></div>
+                <div class="card"><div class="title-area"><h3>Es Batu</h3></div><p>Hanya es batu, buat yang mau mendinginkan hati.</p><div class="price-tag">Rp 1.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item14', -1)">-</button><span class="counter" id="qty-item14">0</span><button class="btn-step" onclick="updateQty('item14', 1)">+</button></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="cartBar" class="cart-bar">
+        <div class="total-info"><span class="total-amount" id="displayTotal">Rp 0</span></div>
+        <button class="btn-checkout" onclick="showModal()">PESAN <i class="fab fa-whatsapp"></i></button>
+    </div>
+
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <div id="step-1">
+                <h3 style="font-family: 'Bangers'; color: var(--dark-blue); margin-bottom: 5px;">DETAIL PESANAN</h3>
+                <div class="order-summary" id="orderSummary"></div>
+
+                <h3 style="font-family: 'Bangers'; color: var(--dark-blue); margin-bottom: 5px;">NAMA KAMU</h3>
+                <input type="text" id="customerName" class="input-nama" placeholder="Tulis namamu..." required>
+                
+                <h3 style="font-family: 'Bangers'; color: var(--dark-blue); margin-top: 10px;">CARA BAYAR</h3>
+                <div class="payment-option" onclick="selectPay('CASH', this)">CASH (Tunai)</div>
+                <div class="payment-option" onclick="selectPay('QRIS', this)">QRIS (Transfer)</div>
+                <button class="btn-checkout" style="width:100%; margin-top:20px; justify-content:center;" onclick="handleNextStep()">LANJUT</button>
+                <p style="margin-top:15px; color:#999; font-size:0.8rem; cursor:pointer;" onclick="hideModal()">Batal</p>
+            </div>
+            <div id="step-qris" style="display: none;">
+                <h3 style="font-family: 'Bangers'; color: var(--primary);">SCAN QRIS</h3>
+                <img src="WhatsApp Image 2026-04-06 at 00.12.46.jpeg" class="qris-img">
+                <p style="font-weight: bold;">Total: <span id="qris-total-text"></span></p>
+                <button class="btn-checkout" style="width:100%; margin-top:20px; justify-content:center;" onclick="finalSend()">KIRIM PESANAN KE WA</button>
+                <p style="margin-top:15px; color:#999; font-size:0.8rem; cursor:pointer;" onclick="showStep(1)">Kembali</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const menu = {
+            'item1': { name: 'Cireng Ayam', price: 1500 }, 'item2': { name: 'Cireng Cokelat', price: 1500 },
+            'item3': { name: 'Cireng Keju', price: 1500 }, 'item4': { name: 'Cireng Ayam (isi 4)', price: 5000 },
+            'item5': { name: 'Cireng Cokelat (isi 4)', price: 5000 }, 'item6': { name: 'Cireng Keju (isi 4)', price: 5000 },
+            'item7': { name: 'Cireng Campur (isi 4)', price: 5000 }, 'item8': { name: 'Makaroni Ngehe 2k', price: 2000 },
+            'item9': { name: 'Makaroni Ngehe 3k', price: 3000 }, 'item10': { name: 'Makaroni Ngehe 5k', price: 5000 },
+            'item11': { name: 'Es Chocolatos', price: 1000 }, 'item12': { name: 'Es Goriorio', price: 1000 },
+            'item13': { name: 'Air Mineral', price: 1000 }, 'item14': { name: 'Es Batu', price: 1000 }
+        };
+
+        let basket = { item1: 0, item2: 0, item3: 0, item4: 0, item5: 0, item6: 0, item7: 0, item8: 0, item9: 0, item10: 0, item11: 0, item12: 0, item13: 0, item14: 0 };
+        let payMethod = "";
+        let currentTotal = 0;
+
+        function updateQty(id, change) {
+            basket[id] = Math.max(0, basket[id] + change);
+            document.getElementById('qty-' + id).innerText = basket[id];
+            currentTotal = 0;
+            for (let key in basket) { currentTotal += basket[key] * menu[key].price; }
+            document.getElementById('displayTotal').innerText = "Total: Rp " + currentTotal.toLocaleString('id-ID');
+            document.getElementById('cartBar').style.display = currentTotal > 0 ? 'flex' : 'none';
+        }
+
+        function showModal() { 
+            renderSummary();
+            showStep(1); 
+            document.getElementById('paymentModal').style.display = 'flex'; 
+        }
+
+        function renderSummary() {
+            const summaryDiv = document.getElementById('orderSummary');
+            summaryDiv.innerHTML = "<h4>Item yang dipesan:</h4>";
+            for (let key in basket) {
+                if (basket[key] > 0) {
+                    summaryDiv.innerHTML += `
+                        <div class="order-item">
+                            <span>${menu[key].name} x${basket[key]}</span>
+                            <span>Rp ${(menu[key].price * basket[key]).toLocaleString('id-ID')}</span>
+                        </div>`;
+                }
+            }
+            summaryDiv.innerHTML += `
+                <div class="order-item" style="border-top:1px solid #ddd; margin-top:10px; font-weight:bold; color:var(--primary);">
+                    <span>TOTAL</span>
+                    <span>Rp ${currentTotal.toLocaleString('id-ID')}</span>
+                </div>`;
+        }
+
+        function hideModal() { document.getElementById('paymentModal').style.display = 'none'; }
+        function showStep(n) {
+            document.getElementById('step-1').style.display = n === 1 ? 'block' : 'none';
+            document.getElementById('step-qris').style.display = n === 'qris' ? 'block' : 'none';
+        }
+
+        function selectPay(val, el) { 
+            payMethod = val; 
+            document.querySelectorAll('.payment-option').forEach(x => x.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function handleNextStep() {
+            const name = document.getElementById('customerName').value.trim();
+            if (!name) { alert("Isi nama kamu dulu ya!"); return; }
+            if (!payMethod) { alert("Pilih cara bayar dulu!"); return; }
+            if (payMethod === 'QRIS') {
+                document.getElementById('qris-total-text').innerText = "Rp " + currentTotal.toLocaleString('id-ID');
+                showStep('qris');
+            } else { finalSend(); }
+        }
+
+        function finalSend() {
+            const name = document.getElementById('customerName').value.trim();
+            let listString = `Halo Warung Mama Gio, saya *${name}* mau pesan:\n\n`;
+            let counter = 1;
+            for (let key in basket) {
+                if (basket[key] > 0) {
+                    listString += `${counter}. ${menu[key].name} (${basket[key]} pcs) = ${(basket[key] * menu[key].price).toLocaleString('id-ID')}\n`;
+                    counter++;
+                }
+            }
+            listString += `\n*Total: Rp ${currentTotal.toLocaleString('id-ID')} (${payMethod})*`;
+            const finalURL = `https://wa.me/6285117797053?text=${encodeURIComponent(listString)}`;
+            window.open(finalURL, '_blank');
+            hideModal();
+        }
+    </script>
+</body>
+</html>
