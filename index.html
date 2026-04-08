@@ -21,13 +21,11 @@
         
         .grid-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px; }
         
-        /* REVISI: EFEK BOX-SHADOW MELAYANG & KLIK-ABLE */
         .card { 
             background: white; 
             border-radius: 15px; 
             padding: 15px; 
             text-align: center; 
-            /* Shadow awal yang membuat kartu terlihat melayang */
             box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
             border-bottom: 4px solid var(--secondary); 
             display: flex; 
@@ -38,10 +36,9 @@
             position: relative;
         }
 
-        /* Efek saat di-hover atau diklik (untuk mobile) */
         .card:hover, .card:active { 
-            transform: translateY(-8px); /* Melayang lebih tinggi */
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3); /* Bayangan lebih dalam */
+            transform: translateY(-8px); 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3); 
         }
 
         .title-area { min-height: 60px; display: flex; flex-direction: column; justify-content: center; width: 100%; margin-bottom: 10px; }
@@ -225,13 +222,38 @@
         function finalSend() {
             const name = document.getElementById('customerName').value.trim();
             let listString = `Halo Warung Mama Gio, saya *${name}* mau pesan:\n\n`;
+            let itemsArray = [];
+            let totalQty = 0;
             let counter = 1;
+
             for (let key in basket) {
                 if (basket[key] > 0) {
                     listString += `${counter}. ${menu[key].name} (${basket[key]} pcs) = ${(basket[key] * menu[key].price).toLocaleString('id-ID')}\n`;
+                    itemsArray.push(`${menu[key].name} (${basket[key]} pcs)`);
+                    totalQty += basket[key];
                     counter++;
                 }
             }
+
+            // --- DATA OTOMATIS KE GOOGLE SHEETS ---
+            const dataKeSheets = {
+                id: "TRX-" + Math.floor(Math.random() * 10000),
+                day: new Date().toLocaleDateString('id-ID', { weekday: 'long' }),
+                date: new Date().toLocaleDateString('id-ID'),
+                customer: name,
+                product: itemsArray.join(", "),
+                qty: totalQty,
+                total: currentTotal,
+                pay: payMethod
+            };
+
+            fetch('https://script.google.com/macros/s/AKfycbx5x7G4Fme6SVWNyyQSrb14R3h5rz0ZgmUdNaKTbs05EnWGljdah99FieGdcE1Go_Ma/exec', {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify(dataKeSheets)
+            });
+            // ---------------------------------------
+
             listString += `\n*Total: Rp ${currentTotal.toLocaleString('id-ID')} (${payMethod})*`;
             const finalURL = `https://wa.me/6285117797053?text=${encodeURIComponent(listString)}`;
             window.open(finalURL, '_blank');
