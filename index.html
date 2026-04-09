@@ -236,10 +236,13 @@
             }
 
             // --- DATA OTOMATIS KE GOOGLE SHEETS ---
+            const now = new Date();
             const dataKeSheets = {
                 id: "TRX-" + Math.floor(Math.random() * 10000),
-                day: new Date().toLocaleDateString('id-ID', { weekday: 'long' }),
-                date: new Date().toLocaleDateString('id-ID'),
+                day: now.toLocaleDateString('id-ID', { weekday: 'long' }),
+                date: now.toLocaleDateString('id-ID'),
+                // FORMAT JAM:MENIT (Contoh: 23:18)
+                time: now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':'),
                 customer: name,
                 product: itemsArray.join(", "),
                 qty: totalQty,
@@ -259,7 +262,6 @@
             });
             // ---------------------------------------
 
-            // MODIFIKASI: KASIH JEDA 1 DETIK SEBELUM BUKA WHATSAPP
             listString += `\n*Total: Rp ${currentTotal.toLocaleString('id-ID')} (${payMethod})*`;
             const finalURL = `https://wa.me/6285117797053?text=${encodeURIComponent(listString)}`;
             
