@@ -15,71 +15,33 @@
         .header-content { position: relative; z-index: 2; }
         .logo-text { font-family: 'Bangers', cursive; font-size: clamp(2.2rem, 7vw, 4rem); color: var(--secondary); text-shadow: 3px 3px var(--primary); margin: 0; }
         .tagline { font-weight: bold; letter-spacing: 2px; margin-top: 10px; color: white; text-transform: uppercase; background: var(--primary); display: inline-block; padding: 6px 20px; border-radius: 50px; font-size: 0.9rem; }
-        
         .container { padding: 30px 15px; max-width: 1200px; margin: auto; }
         .section-title { text-align: center; font-family: 'Bangers'; font-size: 2.5rem; color: var(--dark-blue); margin-bottom: 25px; }
-        
         .grid-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px; }
-        
-        .card { 
-            background: white; 
-            border-radius: 15px; 
-            padding: 15px; 
-            text-align: center; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
-            border-bottom: 4px solid var(--secondary); 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            cursor: pointer;
-            position: relative;
-        }
-
-        .card:hover, .card:active { 
-            transform: translateY(-8px); 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3); 
-        }
-
+        .card { background: white; border-radius: 15px; padding: 15px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); border-bottom: 4px solid var(--secondary); display: flex; flex-direction: column; align-items: center; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); cursor: pointer; position: relative; }
+        .card:hover, .card:active { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(0,0,0,0.3); }
         .title-area { min-height: 60px; display: flex; flex-direction: column; justify-content: center; width: 100%; margin-bottom: 10px; }
-        
-        .card h3 { 
-            color: var(--primary); 
-            font-family: 'Bangers'; 
-            font-size: 1.4rem; 
-            margin: 0; 
-            line-height: 1.2;
-            text-shadow: 1.5px 1.5px 0px rgba(0,0,0,0.1);
-        }
-        
+        .card h3 { color: var(--primary); font-family: 'Bangers'; font-size: 1.4rem; margin: 0; line-height: 1.2; }
         .qty-label { font-size: 0.8rem; font-weight: 700; color: var(--dark-blue); }
         .card p { font-size: 0.8rem; color: #666; margin: 0 0 10px 0; line-height: 1.3; min-height: 35px; }
         .price-tag { font-weight: 800; font-size: 1.1rem; color: var(--price-color); margin-top: auto; margin-bottom: 10px; }
         .centered-row { grid-column: 2 / span 2; display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-
         @media (max-width: 768px) { .grid-container { grid-template-columns: repeat(2, 1fr); } .centered-row { grid-column: 1 / span 2; } }
         @media (max-width: 480px) { .grid-container { grid-template-columns: 1fr; } .centered-row { grid-column: 1; grid-template-columns: 1fr; } }
-
         .stepper { display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn-step { background: var(--dark-blue); color: white; border: none; width: 35px; height: 35px; border-radius: 8px; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .counter { font-weight: 800; font-size: 1.1rem; min-width: 25px; }
-
         .cart-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 15px 25px; box-shadow: 0 -10px 30px rgba(0,0,0,0.15); display: none; justify-content: space-between; align-items: center; z-index: 1000; border-top: 4px solid var(--secondary); }
         .total-amount { font-size: 1.4rem; font-weight: 800; color: var(--primary); }
         .btn-checkout { background: #25d366; color: white; border: none; padding: 12px 20px; border-radius: 12px; font-weight: 800; font-size: 1rem; cursor: pointer; display: flex; align-items: center; gap: 8px; }
-        
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; padding: 15px; }
         .modal-content { background: white; padding: 20px; border-radius: 25px; width: 100%; max-width: 350px; text-align: center; max-height: 90vh; overflow-y: auto; }
-        
         .input-nama { width: 100%; padding: 12px; margin: 10px 0 15px 0; border: 2px solid #eee; border-radius: 12px; font-family: 'Poppins', sans-serif; font-size: 1rem; box-sizing: border-box; outline: none; }
-        
         .order-summary { background: #f8f9fa; border-radius: 15px; padding: 15px; margin-bottom: 20px; text-align: left; border: 1px dashed #ccc; }
         .order-summary h4 { margin: 0 0 10px 0; font-size: 0.9rem; color: var(--dark-blue); border-bottom: 1px solid #eee; padding-bottom: 5px; }
         .order-item { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 5px; color: #444; }
-
         .payment-option { display: block; width: 100%; box-sizing: border-box; padding: 12px; margin: 10px 0; border: 2px solid #eee; border-radius: 15px; cursor: pointer; font-weight: 800; color: var(--dark-blue); }
         .payment-option.active { border-color: var(--primary); background: #fff1f2; color: var(--primary); }
-        
         .qris-img { width: 100%; max-width: 220px; border-radius: 15px; margin: 15px 0; border: 3px solid var(--secondary); }
     </style>
 </head>
@@ -110,7 +72,6 @@
             <div class="card"><div class="title-area"><h3>Makaroni Ngehe</h3></div><p>Paket 'Boss Besar', pedasnya bikin tobat sambal.</p><div class="price-tag">Rp 5.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item10', -1)">-</button><span class="counter" id="qty-item10">0</span><button class="btn-step" onclick="updateQty('item10', 1)">+</button></div></div>
             <div class="card"><div class="title-area"><h3>Es Chocolatos</h3></div><p>Cokelatnya kental, dinginnya bikin mental.</p><div class="price-tag">Rp 1.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item11', -1)">-</button><span class="counter" id="qty-item11">0</span><button class="btn-step" onclick="updateQty('item11', 1)">+</button></div></div>
             <div class="card"><div class="title-area"><h3>Es Goriorio</h3></div><p>Es biskuit legendaris, dinginnya bikin pusing.</p><div class="price-tag">Rp 1.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item12', -1)">-</button><span class="counter" id="qty-item12">0</span><button class="btn-step" onclick="updateQty('item12', 1)">+</button></div></div>
-
             <div class="centered-row">
                 <div class="card"><div class="title-area"><h3>Air Mineral</h3></div><p>Air putih bersih, penetralisir lidah pedas Ngehe.</p><div class="price-tag">Rp 1.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item13', -1)">-</button><span class="counter" id="qty-item13">0</span><button class="btn-step" onclick="updateQty('item13', 1)">+</button></div></div>
                 <div class="card"><div class="title-area"><h3>Es Batu</h3></div><p>Hanya es batu, buat yang mau mendinginkan hati.</p><div class="price-tag">Rp 1.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item14', -1)">-</button><span class="counter" id="qty-item14">0</span><button class="btn-step" onclick="updateQty('item14', 1)">+</button></div></div>
@@ -126,13 +87,11 @@
     <div id="paymentModal" class="modal">
         <div class="modal-content">
             <div id="step-1">
-                <h3 style="font-family: 'Bangers'; color: var(--dark-blue); margin-bottom: 5px;">DETAIL PESANAN</h3>
+                <h3 style="font-family: 'Bangers'; color: var(--dark-blue);">DETAIL PESANAN</h3>
                 <div class="order-summary" id="orderSummary"></div>
-
-                <h3 style="font-family: 'Bangers'; color: var(--dark-blue); margin-bottom: 5px;">NAMA KAMU</h3>
+                <h3 style="font-family: 'Bangers'; color: var(--dark-blue);">NAMA KAMU</h3>
                 <input type="text" id="customerName" class="input-nama" placeholder="Tulis namamu..." required>
-                
-                <h3 style="font-family: 'Bangers'; color: var(--dark-blue); margin-top: 10px;">CARA BAYAR</h3>
+                <h3 style="font-family: 'Bangers'; color: var(--dark-blue);">CARA BAYAR</h3>
                 <div class="payment-option" onclick="selectPay('CASH', this)">CASH (Tunai)</div>
                 <div class="payment-option" onclick="selectPay('QRIS', this)">QRIS (Transfer)</div>
                 <button class="btn-checkout" style="width:100%; margin-top:20px; justify-content:center;" onclick="handleNextStep()">LANJUT</button>
@@ -172,35 +131,22 @@
             document.getElementById('cartBar').style.display = currentTotal > 0 ? 'flex' : 'none';
         }
 
-        function showModal() { 
-            renderSummary();
-            showStep(1); 
-            document.getElementById('paymentModal').style.display = 'flex'; 
-        }
-
-        function renderSummary() {
-            const summaryDiv = document.getElementById('orderSummary');
-            summaryDiv.innerHTML = "<h4>Item yang dipesan:</h4>";
-            for (let key in basket) {
-                if (basket[key] > 0) {
-                    summaryDiv.innerHTML += `
-                        <div class="order-item">
-                            <span>${menu[key].name} x${basket[key]}</span>
-                            <span>Rp ${(menu[key].price * basket[key]).toLocaleString('id-ID')}</span>
-                        </div>`;
-                }
-            }
-            summaryDiv.innerHTML += `
-                <div class="order-item" style="border-top:1px solid #ddd; margin-top:10px; font-weight:bold; color:var(--primary);">
-                    <span>TOTAL</span>
-                    <span>Rp ${currentTotal.toLocaleString('id-ID')}</span>
-                </div>`;
-        }
-
+        function showModal() { renderSummary(); showStep(1); document.getElementById('paymentModal').style.display = 'flex'; }
         function hideModal() { document.getElementById('paymentModal').style.display = 'none'; }
         function showStep(n) {
             document.getElementById('step-1').style.display = n === 1 ? 'block' : 'none';
             document.getElementById('step-qris').style.display = n === 'qris' ? 'block' : 'none';
+        }
+
+        function renderSummary() {
+            const summaryDiv = document.getElementById('orderSummary');
+            summaryDiv.innerHTML = "<h4>Item:</h4>";
+            for (let key in basket) {
+                if (basket[key] > 0) {
+                    summaryDiv.innerHTML += `<div class="order-item"><span>${menu[key].name} x${basket[key]}</span><span>Rp ${(menu[key].price * basket[key]).toLocaleString('id-ID')}</span></div>`;
+                }
+            }
+            summaryDiv.innerHTML += `<div class="order-item" style="border-top:1px solid #ddd; margin-top:10px; font-weight:bold; color:var(--primary);"><span>TOTAL</span><span>Rp ${currentTotal.toLocaleString('id-ID')}</span></div>`;
         }
 
         function selectPay(val, el) { 
@@ -211,8 +157,7 @@
 
         function handleNextStep() {
             const name = document.getElementById('customerName').value.trim();
-            if (!name) { alert("Isi nama kamu dulu ya!"); return; }
-            if (!payMethod) { alert("Pilih cara bayar dulu!"); return; }
+            if (!name || !payMethod) { alert("Isi nama & pilih cara bayar!"); return; }
             if (payMethod === 'QRIS') {
                 document.getElementById('qris-total-text').innerText = "Rp " + currentTotal.toLocaleString('id-ID');
                 showStep('qris');
@@ -221,27 +166,25 @@
 
         function finalSend() {
             const name = document.getElementById('customerName').value.trim();
-            let listString = `Halo Warung Mama Gio, saya *${name}* mau pesan:\n\n`;
             let itemsArray = [];
             let totalQty = 0;
+            let listString = `Halo Warung Mama Gio, saya *${name}* mau pesan:\n\n`;
             let counter = 1;
 
             for (let key in basket) {
                 if (basket[key] > 0) {
-                    listString += `${counter}. ${menu[key].name} (${basket[key]} pcs) = ${(basket[key] * menu[key].price).toLocaleString('id-ID')}\n`;
+                    listString += `${counter}. ${menu[key].name} (${basket[key]} pcs)\n`;
                     itemsArray.push(`${menu[key].name} (${basket[key]} pcs)`);
                     totalQty += basket[key];
                     counter++;
                 }
             }
 
-            // --- DATA OTOMATIS KE GOOGLE SHEETS ---
             const now = new Date();
             const dataKeSheets = {
                 id: "TRX-" + Math.floor(Math.random() * 10000),
                 day: now.toLocaleDateString('id-ID', { weekday: 'long' }),
                 date: now.toLocaleDateString('id-ID'),
-                // FORMAT JAM:MENIT (HH:mm) - SUDAH TERMASUK PERBAIKAN KOLOM JAM
                 time: now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':'),
                 customer: name,
                 product: itemsArray.join(", "),
@@ -250,25 +193,16 @@
                 pay: payMethod
             };
 
-            // PROSES KIRIM DATA (FETCH)
             fetch('https://script.google.com/macros/s/AKfycbx5x7G4Fme6SVWNyyQSrb14R3h5rz0ZgmUdNaKTbs05EnWGljdah99FieGdcE1Go_Ma/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 body: JSON.stringify(dataKeSheets)
-            }).then(() => {
-                console.log("Data berhasil dikirim!");
-            }).catch(err => {
-                console.error("Gagal kirim data:", err);
             });
-            // ---------------------------------------
 
             listString += `\n*Total: Rp ${currentTotal.toLocaleString('id-ID')} (${payMethod})*`;
             const finalURL = `https://wa.me/6285117797053?text=${encodeURIComponent(listString)}`;
             
-            setTimeout(function() {
-                window.open(finalURL, '_blank');
-                hideModal();
-            }, 1000); 
+            setTimeout(() => { window.open(finalURL, '_blank'); hideModal(); }, 1000);
         }
     </script>
 </body>
