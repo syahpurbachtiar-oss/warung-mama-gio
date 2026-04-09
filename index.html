@@ -166,26 +166,44 @@
 
         function finalSend() {
             const name = document.getElementById('customerName').value.trim();
+            const now = new Date();
+            const trxId = "TRX-" + Math.floor(Math.random() * 10000);
+            const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':');
+            const dateStr = now.toLocaleDateString('id-ID');
+            
+            // --- FORMAT NOTA TEKS UNTUK WHATSAPP ---
+            let notaWA = `=========================\n`;
+            notaWA += `    *WARUNG MAMA GIO*\n`;
+            notaWA += `=========================\n`;
+            notaWA += `ID: ${trxId}\n`;
+            notaWA += `Tgl: ${dateStr} (${timeStr})\n`;
+            notaWA += `Nama: ${name}\n`;
+            notaWA += `-------------------------\n`;
+
             let itemsArray = [];
             let totalQty = 0;
-            let listString = `Halo Warung Mama Gio, saya *${name}* mau pesan:\n\n`;
-            let counter = 1;
 
             for (let key in basket) {
                 if (basket[key] > 0) {
-                    listString += `${counter}. ${menu[key].name} (${basket[key]} pcs)\n`;
+                    let subtotal = basket[key] * menu[key].price;
+                    notaWA += `- ${menu[key].name} (${basket[key]}x) : ${subtotal.toLocaleString('id-ID')}\n`;
                     itemsArray.push(`${menu[key].name} (${basket[key]} pcs)`);
                     totalQty += basket[key];
-                    counter++;
                 }
             }
 
-            const now = new Date();
+            notaWA += `-------------------------\n`;
+            notaWA += `*TOTAL: Rp ${currentTotal.toLocaleString('id-ID')}*\n`;
+            notaWA += `Bayar: ${payMethod}\n`;
+            notaWA += `=========================\n`;
+            notaWA += `_Terima kasih sudah jajan!_`;
+
+            // --- DATA UNTUK GOOGLE SHEETS ---
             const dataKeSheets = {
-                id: "TRX-" + Math.floor(Math.random() * 10000),
+                id: trxId,
                 day: now.toLocaleDateString('id-ID', { weekday: 'long' }),
-                date: now.toLocaleDateString('id-ID'),
-                time: now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':'),
+                date: dateStr,
+                time: timeStr,
                 customer: name,
                 product: itemsArray.join(", "),
                 qty: totalQty,
@@ -193,15 +211,14 @@
                 pay: payMethod
             };
 
-            // URL BARU YANG SUDAH TERUPDATE:
+            // URL APPS SCRIPT KAMU
             fetch('https://script.google.com/macros/s/AKfycbw5b8gf7PiwQwNj3ikyMhZ1v-BmTh6k7fA_b-nxmm_1k7nVNDyJ7em0KjhkEj6yUA_O/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 body: JSON.stringify(dataKeSheets)
             });
 
-            listString += `\n*Total: Rp ${currentTotal.toLocaleString('id-ID')} (${payMethod})*`;
-            const finalURL = `https://wa.me/6285117797053?text=${encodeURIComponent(listString)}`;
+            const finalURL = `https://wa.me/6285117797053?text=${encodeURIComponent(notaWA)}`;
             
             setTimeout(() => { window.open(finalURL, '_blank'); hideModal(); }, 1000);
         }
