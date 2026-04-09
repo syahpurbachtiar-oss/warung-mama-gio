@@ -241,7 +241,7 @@
                 id: "TRX-" + Math.floor(Math.random() * 10000),
                 day: now.toLocaleDateString('id-ID', { weekday: 'long' }),
                 date: now.toLocaleDateString('id-ID'),
-                // FORMAT JAM:MENIT (Contoh: 23:18)
+                // FORMAT JAM:MENIT (HH:mm) - SUDAH TERMASUK PERBAIKAN KOLOM JAM
                 time: now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace('.', ':'),
                 customer: name,
                 product: itemsArray.join(", "),
@@ -268,7 +268,7 @@
             setTimeout(function() {
                 window.open(finalURL, '_blank');
                 hideModal();
-            }, 1000); // 1000 milidetik = 1 detik jeda
+            }, 1000); 
         }
     </script>
 </body>
