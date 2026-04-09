@@ -247,17 +247,26 @@
                 pay: payMethod
             };
 
+            // PROSES KIRIM DATA (FETCH)
             fetch('https://script.google.com/macros/s/AKfycbx5x7G4Fme6SVWNyyQSrb14R3h5rz0ZgmUdNaKTbs05EnWGljdah99FieGdcE1Go_Ma/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 body: JSON.stringify(dataKeSheets)
+            }).then(() => {
+                console.log("Data berhasil dikirim!");
+            }).catch(err => {
+                console.error("Gagal kirim data:", err);
             });
             // ---------------------------------------
 
+            // MODIFIKASI: KASIH JEDA 1 DETIK SEBELUM BUKA WHATSAPP
             listString += `\n*Total: Rp ${currentTotal.toLocaleString('id-ID')} (${payMethod})*`;
             const finalURL = `https://wa.me/6285117797053?text=${encodeURIComponent(listString)}`;
-            window.open(finalURL, '_blank');
-            hideModal();
+            
+            setTimeout(function() {
+                window.open(finalURL, '_blank');
+                hideModal();
+            }, 1000); // 1000 milidetik = 1 detik jeda
         }
     </script>
 </body>
