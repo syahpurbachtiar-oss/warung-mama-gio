@@ -2,44 +2,95 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
     <title>Dashboard Admin - Mama Gio</title>
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 15px; background-color: #f4f7f6; }
+        /* CSS KHUSUS HP BIAR CAKEP */
+        * { box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            margin: 0; 
+            padding: 10px; 
+            background-color: #f0f2f5; 
+            color: #1c1e21;
+        }
         .container { max-width: 1000px; margin: auto; }
-        h2 { text-align: center; color: #333; margin-bottom: 20px; }
         
-        .card-container { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px; }
-        .card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); flex: 1; min-width: 250px; text-align: center; }
-        .card h3 { margin: 0; color: #666; font-size: 16px; }
-        .card p { font-size: 24px; font-weight: bold; margin: 10px 0 0; color: #2c3e50; }
+        h2 { text-align: center; font-size: 1.5rem; margin-top: 10px; color: #ff9800; }
+
+        /* Kartu Ringkasan */
+        .card-container { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 10px; 
+            margin-bottom: 15px; 
+        }
+        .card { 
+            background: #fff; 
+            padding: 15px; 
+            border-radius: 12px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+            text-align: center; 
+        }
+        .card h3 { margin: 0; font-size: 0.8rem; color: #65676b; text-transform: uppercase; }
+        .card p { font-size: 1.1rem; font-weight: bold; margin: 5px 0 0; color: #050505; }
+
+        /* Grafik */
+        .chart-box { 
+            background: #fff; 
+            padding: 15px; 
+            border-radius: 12px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+            margin-bottom: 15px; 
+        }
+
+        /* Tabel Responsif */
+        .table-container { 
+            background: #fff; 
+            padding: 10px; 
+            border-radius: 12px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+            overflow-x: auto; 
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background-color: #f8f9fa; color: #65676b; font-weight: 600; }
         
-        .chart-box { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        
-        .table-container { background: #fff; padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; min-width: 600px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background-color: #ff9800; color: white; }
-        
-        @media (max-width: 600px) {
-            body { padding: 10px; }
-            .card { min-width: 100%; }
+        /* Baris warna selang-seling */
+        tr:nth-child(even) { background-color: #fafafa; }
+
+        /* Tombol Refresh */
+        .btn-refresh {
+            width: 100%;
+            padding: 12px;
+            background-color: #ff9800;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>📊 Dashboard Monitor Mama Gio</h2>
+    <h2>📊 Dashboard Mama Gio</h2>
+
+    <button class="btn-refresh" onclick="location.reload()">🔄 SEGARKAN DATA</button>
 
     <div class="card-container">
         <div class="card">
-            <h3>Total Pemasukan</h3>
+            <h3>Pemasukan</h3>
             <p id="totalPemasukan">Rp 0</p>
         </div>
         <div class="card">
-            <h3>Jumlah Pesanan</h3>
+            <h3>Pesanan</h3>
             <p id="totalPesanan">0</p>
         </div>
     </div>
@@ -49,24 +100,24 @@
     </div>
 
     <div class="table-container">
-        <h3>Riwayat Pesanan Terbaru</h3>
+        <h3 style="font-size: 1rem; margin-left: 5px;">Riwayat Pesanan</h3>
         <table>
             <thead>
                 <tr>
                     <th>Waktu</th>
-                    <th>Pesanan</th>
-                    <th>Nama Pelanggan</th>
-                    <th>Total Harga</th>
+                    <th>Nama</th>
+                    <th>Total</th>
                 </tr>
             </thead>
             <tbody id="dataBody">
-                </tbody>
+                <tr><td colspan="3" style="text-align:center;">Memuat data...</td></tr>
+            </tbody>
         </table>
     </div>
 </div>
 
 <script>
-    // PENTING: GANTI DENGAN URL GOOGLE SCRIPT KAMU SENDIRI!
+    // MASUKKAN URL GOOGLE SCRIPT KAMU DI SINI
     const SCRIPT_URL = 'GANTI_DENGAN_URL_WEB_APP_KAMU';
 
     async function fetchData() {
@@ -74,44 +125,51 @@
             const response = await fetch(SCRIPT_URL);
             const data = await response.json();
             
-            // 1. Update Tabel
+            // 1. Update Ringkasan & Tabel
             let tableHTML = '';
             let totalDuit = 0;
-            data.slice().reverse().forEach(row => {
+            
+            // Urutkan dari yang terbaru (paling atas)
+            const sortedData = data.slice().reverse();
+
+            sortedData.forEach(row => {
                 tableHTML += `<tr>
-                    <td>${row.timestamp}</td>
-                    <td>${row.pesanan}</td>
+                    <td>${row.timestamp.split(' ')[0]}</td>
                     <td>${row.nama}</td>
                     <td>Rp ${row.harga.toLocaleString()}</td>
                 </tr>`;
                 totalDuit += row.harga;
             });
+
             document.getElementById('dataBody').innerHTML = tableHTML;
             document.getElementById('totalPemasukan').innerText = 'Rp ' + totalDuit.toLocaleString();
             document.getElementById('totalPesanan').innerText = data.length;
 
-            // 2. Update Grafik
+            // 2. Setting Grafik
             const ctx = document.getElementById('myChart').getContext('2d');
             new Chart(ctx, {
-                type: 'bar',
+                type: 'line', // Ganti ke garis biar keren di HP
                 data: {
-                    labels: data.map(item => item.timestamp.split(' ')[0]), // Ambil tgl aja
+                    labels: data.map(item => item.timestamp.split(' ')[1] || ''), // Jam
                     datasets: [{
                         label: 'Pemasukan (Rp)',
                         data: data.map(item => item.harga),
-                        backgroundColor: '#ff9800',
-                        borderRadius: 5
+                        borderColor: '#ff9800',
+                        backgroundColor: 'rgba(255, 152, 0, 0.1)',
+                        fill: true,
+                        tension: 0.3
                     }]
                 },
                 options: {
                     responsive: true,
-                    plugins: { legend: { display: false } }
+                    maintainAspectRatio: true,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true } }
                 }
             });
 
         } catch (error) {
-            console.error('Gagal ambil data:', error);
-            document.getElementById('dataBody').innerHTML = '<tr><td colspan="4">Gagal memuat data. Cek SCRIPT_URL.</td></tr>';
+            document.getElementById('dataBody').innerHTML = '<tr><td colspan="3" style="color:red;">Gagal muat data. Cek SCRIPT_URL!</td></tr>';
         }
     }
 
