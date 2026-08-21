@@ -3,12 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Warung Mama Gio - Pesan Online</title>
+    <title>Warung Mama Gio - Pesan Online (3D Experience)</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;800&family=Bangers&display=swap" rel="stylesheet">
+    
+    <!-- Three.js & GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
     <style>
+        /* ORIGINAL CSS - DIJAGA SEPENUHNYA */
         :root { --primary: #e63946; --secondary: #ffb703; --dark-blue: #1d3557; --light: #f1faee; --price-color: #f3722c; }
-        body { font-family: 'Poppins', sans-serif; margin: 0; background-color: var(--light); padding-bottom: 120px; }
+        body { font-family: 'Poppins', sans-serif; margin: 0; background-color: transparent !important; padding-bottom: 120px; overflow-x: hidden; }
         header { position: relative; padding: 70px 20px; text-align: center; background: #000; overflow: hidden; border-bottom: 5px solid var(--secondary); }
         .collage-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: grid; grid-template-columns: repeat(4, 1fr); z-index: 1; filter: brightness(0.5); opacity: 0.7; }
         .collage-bg img { width: 100%; height: 100%; object-fit: cover; }
@@ -16,10 +22,10 @@
         .logo-text { font-family: 'Bangers', cursive; font-size: clamp(2.2rem, 7vw, 4rem); color: var(--secondary); text-shadow: 3px 3px var(--primary); margin: 0; }
         .tagline { font-weight: bold; letter-spacing: 2px; margin-top: 10px; color: white; text-transform: uppercase; background: var(--primary); display: inline-block; padding: 6px 20px; border-radius: 50px; font-size: 0.9rem; }
         .container { padding: 30px 15px; max-width: 1200px; margin: auto; }
-        .section-title { text-align: center; font-family: 'Bangers'; font-size: 2.5rem; color: var(--dark-blue); margin-bottom: 25px; }
+        .section-title { text-align: center; font-family: 'Bangers'; font-size: 2.5rem; color: #fff; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); margin-bottom: 25px; } /* Diubah sedikit agar terbaca di bg gelap */
         .grid-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px; }
-        .card { background: white; border-radius: 15px; padding: 15px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); border-bottom: 4px solid var(--secondary); display: flex; flex-direction: column; align-items: center; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); cursor: pointer; position: relative; }
-        .card:hover, .card:active { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(0,0,0,0.3); }
+        .card { background: rgba(255, 255, 255, 0.95); border-radius: 15px; padding: 15px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); border-bottom: 4px solid var(--secondary); display: flex; flex-direction: column; align-items: center; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); cursor: pointer; position: relative; backdrop-filter: blur(5px); }
+        .card:hover, .card:active { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(230, 57, 70, 0.3); }
         .title-area { min-height: 60px; display: flex; flex-direction: column; justify-content: center; width: 100%; margin-bottom: 10px; }
         .card h3 { color: var(--primary); font-family: 'Bangers'; font-size: 1.4rem; margin: 0; line-height: 1.2; }
         .qty-label { font-size: 0.8rem; font-weight: 700; color: var(--dark-blue); }
@@ -30,7 +36,7 @@
         .stepper { display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn-step { background: var(--dark-blue); color: white; border: none; width: 35px; height: 35px; border-radius: 8px; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .counter { font-weight: 800; font-size: 1.1rem; min-width: 25px; }
-        .cart-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 15px 25px; box-shadow: 0 -10px 30px rgba(0,0,0,0.15); display: none; justify-content: space-between; align-items: center; z-index: 1000; border-top: 4px solid var(--secondary); }
+        .cart-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); padding: 15px 25px; box-shadow: 0 -10px 30px rgba(0,0,0,0.15); display: none; justify-content: space-between; align-items: center; z-index: 1000; border-top: 4px solid var(--secondary); backdrop-filter: blur(10px); }
         .total-amount { font-size: 1.4rem; font-weight: 800; color: var(--primary); }
         .btn-checkout { background: #25d366; color: white; border: none; padding: 12px 20px; border-radius: 12px; font-weight: 800; font-size: 1rem; cursor: pointer; display: flex; align-items: center; gap: 8px; }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; padding: 15px; }
@@ -42,77 +48,125 @@
         .payment-option { display: block; width: 100%; box-sizing: border-box; padding: 12px; margin: 10px 0; border: 2px solid #eee; border-radius: 15px; cursor: pointer; font-weight: 800; color: var(--dark-blue); }
         .payment-option.active { border-color: var(--primary); background: #fff1f2; color: var(--primary); }
         .qris-img { width: 100%; max-width: 220px; border-radius: 15px; margin: 15px 0; border: 3px solid var(--secondary); }
+
+        /* --- TAMBAHAN CSS 3D AAA --- */
+        #webgl-bg {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1; pointer-events: none; /* Tidak mengganggu klik menu */
+        }
+        #ui-layer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 10000; opacity: 0; transition: opacity 2s;
+        }
+        #ui-layer h1 {
+            color: #ffffff; font-family: 'Bangers', cursive; font-size: clamp(3rem, 8vw, 6rem); 
+            letter-spacing: 0.5vw; font-weight: 200; margin: 0; pointer-events: auto;
+            text-shadow: 0 0 30px rgba(255,183,3,0.5); cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        #ui-layer h1:hover { letter-spacing: 0.8vw; text-shadow: 0 0 50px rgba(230,57,70,0.8); }
+        .subtitle-3d {
+            color: #ffb703; letter-spacing: 4px; font-size: 1rem; margin-top: 20px;
+            text-transform: uppercase; font-family: monospace; font-weight: bold;
+            animation: pulse-text 2s infinite; pointer-events: none;
+        }
+        #intro-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #0d1b2a; z-index: 10001; display: flex; justify-content: center; align-items: center;
+            color: #ffb703; font-family: monospace; letter-spacing: 5px; text-transform: uppercase;
+            transition: opacity 1.5s ease-out; pointer-events: none;
+        }
+        .glitch { animation: pulse 2s infinite; font-weight: bold; }
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; text-shadow: 0 0 10px #ffb703; } 100% { opacity: 0.5; } }
+        @keyframes pulse-text { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
     </style>
 </head>
 <body>
-    <header>
-        <div class="collage-bg">
-            <img src="WhatsApp Image 2026-04-04 at 18.47.20.jpeg"><img src="WhatsApp Image 2026-04-04 at 18.57.04.jpeg">
-            <img src="WhatsApp Image 2026-04-04 at 18.57.29.jpeg"><img src="WhatsApp Image 2026-04-04 at 18.58.06.jpeg">
-        </div>
-        <div class="header-content">
-            <h1 class="logo-text">WARUNG MAMA GIO</h1>
-            <div class="tagline">CEMILAN HINGGA AKHIR JAMAN</div>
-        </div>
-    </header>
 
-    <div class="container">
-        <h2 class="section-title">BARISAN MENU JUARA</h2>
-        <div class="grid-container">
-            <div class="card"><div class="title-area"><h3>Cireng Ayam</h3></div><p>Ayamnya disuwir paksa, rasanya bikin lidah dansa.</p><div class="price-tag">Rp 1.500</div><div class="stepper"><button class="btn-step" onclick="updateQty('item1', -1)">-</button><span class="counter" id="qty-item1">0</span><button class="btn-step" onclick="updateQty('item1', 1)">+</button></div></div>
-            <div class="card"><div class="title-area"><h3>Cireng Cokelat</h3></div><p>Cireng isi cokelat, dimakan panas langsung tobat.</p><div class="price-tag">Rp 1.500</div><div class="stepper"><button class="btn-step" onclick="updateQty('item2', -1)">-</button><span class="counter" id="qty-item2">0</span><button class="btn-step" onclick="updateQty('item2', 1)">+</button></div></div>
-            <div class="card"><div class="title-area"><h3>Cireng Keju</h3></div><p>Kejunya lumer, pas digigit langsung pamer.</p><div class="price-tag">Rp 1.500</div><div class="stepper"><button class="btn-step" onclick="updateQty('item3', -1)">-</button><span class="counter" id="qty-item3">0</span><button class="btn-step" onclick="updateQty('item3', 1)">+</button></div></div>
-            <div class="card"><div class="title-area"><h3>Cireng Ayam</h3><span class="qty-label">(Isi 4 pcs)</span></div><p>Beli 4 langsung, buat yang perutnya gak santai.</p><div class="price-tag">Rp 5.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item4', -1)">-</button><span class="counter" id="qty-item4">0</span><button class="btn-step" onclick="updateQty('item4', 1)">+</button></div></div>
-            <div class="card"><div class="title-area"><h3>Cireng Cokelat</h3><span class="qty-label">(Isi 4 pcs)</span></div><p>Paket cokelat combo, biar manisnya gak jomblo.</p><div class="price-tag">Rp 5.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item5', -1)">-</button><span class="counter" id="qty-item5">0</span><button class="btn-step" onclick="updateQty('item5', 1)">+</button></div></div>
-            <div class="card"><div class="title-area"><h3>Cireng Keju</h3><span class="qty-label">(Isi 4 pcs)</span></div><p>Paket keju baris, kejunya melimpah gak pudar.</p><div class="price-tag">Rp 5.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item6', -1)">-</button><span class="counter" id="qty-item6">0</span><button class="btn-step" onclick="updateQty('item6', 1)">+</button></div></div>
-            <div class="card"><div class="title-area"><h3>Cireng Campur</h3><span class="qty-label">(Isi 4 pcs)</span></div><p>Buat yang labil, isinya semua rasa biar adil.</p><div class="price-tag">Rp 5.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item7', -1)">-</button><span class="counter" id="qty-item7">0</span><button class="btn-step" onclick="updateQty('item7', 1)">+</button></div></div>
-            <div class="card"><div class="title-area"><h3>Makaroni Ngehe</h3></div><p>Level 'Ngehe' Ori, pedasnya bikin lupa diri.</p><div class="price-tag">Rp 2.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item8', -1)">-</button><span class="counter" id="qty-item8">0</span><button class="btn-step" onclick="updateQty('item8', 1)">+</button></div></div>
-            <div class="card"><div class="title-area"><h3>Makaroni Ngehe</h3></div><p>Level upgrade, pedasnya makin gak ada obat.</p><div class="price-tag">Rp 3.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item9', -1)">-</button><span class="counter" id="qty-item9">0</span><button class="btn-step" onclick="updateQty('item9', 1)">+</button></div></div>
-            <div class="card"><div class="title-area"><h3>Makaroni Ngehe</h3></div><p>Paket 'Boss Besar', pedasnya bikin tobat sambal.</p><div class="price-tag">Rp 5.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item10', -1)">-</button><span class="counter" id="qty-item10">0</span><button class="btn-step" onclick="updateQty('item10', 1)">+</button></div></div>
-            <div class="card"><div class="title-area"><h3>Keju Aroma</h3></div><p>Kriuknya dapet, kejunya bikin ketagihan awet.</p><div class="price-tag">Rp 1.500</div><div class="stepper"><button class="btn-step" onclick="updateQty('item15', -1)">-</button><span class="counter" id="qty-item15">0</span><button class="btn-step" onclick="updateQty('item15', 1)">+</button></div></div>
-            <div class="card"><div class="title-area"><h3>Keju Aroma</h3><span class="qty-label">(Isi 4 pcs)</span></div><p>Sekali gigit, dunia serasa milik berdua (sama keju).</p><div class="price-tag">Rp 5.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item16', -1)">-</button><span class="counter" id="qty-item16">0</span><button class="btn-step" onclick="updateQty('item16', 1)">+</button></div></div>
-            
-            <div class="card"><div class="title-area"><h3>Kentang Goreng</h3></div><p>Kentang renyah gurih, cemilan pas saat santai.</p><div class="price-tag">Rp 2.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item17', -1)">-</button><span class="counter" id="qty-item17">0</span><button class="btn-step" onclick="updateQty('item17', 1)">+</button></div></div>
-            <div class="card"><div class="title-area"><h3>Kentang Goreng</h3></div><p>Porsi mantap puas, renyahnya bikin ketagihan.</p><div class="price-tag">Rp 3.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item18', -1)">-</button><span class="counter" id="qty-item18">0</span><button class="btn-step" onclick="updateQty('item18', 1)">+</button></div></div>
+    <!-- 3D BACKGROUND -->
+    <div id="webgl-bg"></div>
 
-            <div class="card"><div class="title-area"><h3>Es Chocolatos</h3></div><p>Cokelatnya kental, dinginnya bikin mental.</p><div class="price-tag">Rp 1.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item11', -1)">-</button><span class="counter" id="qty-item11">0</span><button class="btn-step" onclick="updateQty('item11', 1)">+</button></div></div>
-            <div class="card"><div class="title-area"><h3>Es Goriorio</h3></div><p>Es biskuit legendaris, dinginnya bikin pusing.</p><div class="price-tag">Rp 1.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item12', -1)">-</button><span class="counter" id="qty-item12">0</span><button class="btn-step" onclick="updateQty('item12', 1)">+</button></div></div>
-            
-            <div class="card"><div class="title-area"><h3>Es Kiko</h3></div><p>Es stick legendaris manis, segar mendinginkan suasana.</p><div class="price-tag">Rp 1.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item19', -1)">-</button><span class="counter" id="qty-item19">0</span><button class="btn-step" onclick="updateQty('item19', 1)">+</button></div></div>
-
-            <div class="card"><div class="title-area"><h3>Air Mineral</h3></div><p>Air putih bersih, penetralisir lidah pedas Ngehe.</p><div class="price-tag">Rp 1.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item13', -1)">-</button><span class="counter" id="qty-item13">0</span><button class="btn-step" onclick="updateQty('item13', 1)">+</button></div></div>
-            <div class="card"><div class="title-area"><h3>Es Batu</h3></div><p>Hanya es batu, buat yang mau mendinginkan hati.</p><div class="price-tag">Rp 1.500</div><div class="stepper"><button class="btn-step" onclick="updateQty('item14', -1)">-</button><span class="counter" id="qty-item14">0</span><button class="btn-step" onclick="updateQty('item14', 1)">+</button></div></div>
-        </div>
+    <!-- AAA INTRO SCREENS -->
+    <div id="intro-screen"><span class="glitch">Initializing WMG Engine...</span></div>
+    
+    <div id="ui-layer">
+        <h1 id="trigger">WARUNG MAMA GIO</h1>
+        <div class="subtitle-3d">Click to Enter Store</div>
     </div>
 
-    <div id="cartBar" class="cart-bar">
-        <div class="total-info"><span class="total-amount" id="displayTotal">Rp 0</span></div>
-        <button class="btn-checkout" onclick="showModal()">PESAN <i class="fab fa-whatsapp"></i></button>
-    </div>
-
-    <div id="paymentModal" class="modal">
-        <div class="modal-content">
-            <div id="step-1">
-                <h3 style="font-family: 'Bangers'; color: var(--dark-blue);">DETAIL PESANAN</h3>
-                <div class="order-summary" id="orderSummary"></div>
-                <h3 style="font-family: 'Bangers'; color: var(--dark-blue);">NAMA KAMU</h3>
-                <input type="text" id="customerName" class="input-nama" placeholder="Tulis namamu..." required>
-                <h3 style="font-family: 'Bangers'; color: var(--dark-blue);">CARA BAYAR</h3>
-                <div class="payment-option" onclick="selectPay('CASH', this)">CASH (Tunai)</div>
-                <div class="payment-option" onclick="selectPay('QRIS', this)">QRIS (Transfer)</div>
-                <button class="btn-checkout" style="width:100%; margin-top:20px; justify-content:center;" onclick="handleNextStep()">LANJUT</button>
-                <p style="margin-top:15px; color:#999; font-size:0.8rem; cursor:pointer;" onclick="hideModal()">Batal</p>
+    <!-- ORIGINAL SHOP CONTENT (Disembunyikan saat intro) -->
+    <div id="shop-content" style="opacity: 0; pointer-events: none; transition: opacity 1.5s ease-in-out;">
+        <header>
+            <div class="collage-bg">
+                <img src="WhatsApp Image 2026-04-04 at 18.47.20.jpeg" onerror="this.src='https://via.placeholder.com/400x300/e63946/fff?text=WMG'"><img src="WhatsApp Image 2026-04-04 at 18.57.04.jpeg" onerror="this.src='https://via.placeholder.com/400x300/ffb703/fff?text=WMG'">
+                <img src="WhatsApp Image 2026-04-04 at 18.57.29.jpeg" onerror="this.src='https://via.placeholder.com/400x300/1d3557/fff?text=WMG'"><img src="WhatsApp Image 2026-04-04 at 18.58.06.jpeg" onerror="this.src='https://via.placeholder.com/400x300/e63946/fff?text=WMG'">
             </div>
-            <div id="step-qris" style="display: none;">
-                <h3 style="font-family: 'Bangers'; color: var(--primary);">SCAN QRIS</h3>
-                <img src="WhatsApp Image 2026-04-06 at 00.12.46.jpeg" class="qris-img">
-                <p style="font-weight: bold;">Total: <span id="qris-total-text"></span></p>
-                <button class="btn-checkout" style="width:100%; margin-top:20px; justify-content:center;" onclick="finalSend()">KIRIM PESANAN KE WA</button>
-                <p style="margin-top:15px; color:#999; font-size:0.8rem; cursor:pointer;" onclick="showStep(1)">Kembali</p>
+            <div class="header-content">
+                <h1 class="logo-text">WARUNG MAMA GIO</h1>
+                <div class="tagline">CEMILAN HINGGA AKHIR JAMAN</div>
+            </div>
+        </header>
+
+        <div class="container">
+            <h2 class="section-title">BARISAN MENU JUARA</h2>
+            <div class="grid-container">
+                <div class="card"><div class="title-area"><h3>Cireng Ayam</h3></div><p>Ayamnya disuwir paksa, rasanya bikin lidah dansa.</p><div class="price-tag">Rp 1.500</div><div class="stepper"><button class="btn-step" onclick="updateQty('item1', -1)">-</button><span class="counter" id="qty-item1">0</span><button class="btn-step" onclick="updateQty('item1', 1)">+</button></div></div>
+                <div class="card"><div class="title-area"><h3>Cireng Cokelat</h3></div><p>Cireng isi cokelat, dimakan panas langsung tobat.</p><div class="price-tag">Rp 1.500</div><div class="stepper"><button class="btn-step" onclick="updateQty('item2', -1)">-</button><span class="counter" id="qty-item2">0</span><button class="btn-step" onclick="updateQty('item2', 1)">+</button></div></div>
+                <div class="card"><div class="title-area"><h3>Cireng Keju</h3></div><p>Kejunya lumer, pas digigit langsung pamer.</p><div class="price-tag">Rp 1.500</div><div class="stepper"><button class="btn-step" onclick="updateQty('item3', -1)">-</button><span class="counter" id="qty-item3">0</span><button class="btn-step" onclick="updateQty('item3', 1)">+</button></div></div>
+                <div class="card"><div class="title-area"><h3>Cireng Ayam</h3><span class="qty-label">(Isi 4 pcs)</span></div><p>Beli 4 langsung, buat yang perutnya gak santai.</p><div class="price-tag">Rp 5.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item4', -1)">-</button><span class="counter" id="qty-item4">0</span><button class="btn-step" onclick="updateQty('item4', 1)">+</button></div></div>
+                <div class="card"><div class="title-area"><h3>Cireng Cokelat</h3><span class="qty-label">(Isi 4 pcs)</span></div><p>Paket cokelat combo, biar manisnya gak jomblo.</p><div class="price-tag">Rp 5.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item5', -1)">-</button><span class="counter" id="qty-item5">0</span><button class="btn-step" onclick="updateQty('item5', 1)">+</button></div></div>
+                <div class="card"><div class="title-area"><h3>Cireng Keju</h3><span class="qty-label">(Isi 4 pcs)</span></div><p>Paket keju baris, kejunya melimpah gak pudar.</p><div class="price-tag">Rp 5.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item6', -1)">-</button><span class="counter" id="qty-item6">0</span><button class="btn-step" onclick="updateQty('item6', 1)">+</button></div></div>
+                <div class="card"><div class="title-area"><h3>Cireng Campur</h3><span class="qty-label">(Isi 4 pcs)</span></div><p>Buat yang labil, isinya semua rasa biar adil.</p><div class="price-tag">Rp 5.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item7', -1)">-</button><span class="counter" id="qty-item7">0</span><button class="btn-step" onclick="updateQty('item7', 1)">+</button></div></div>
+                <div class="card"><div class="title-area"><h3>Makaroni Ngehe</h3></div><p>Level 'Ngehe' Ori, pedasnya bikin lupa diri.</p><div class="price-tag">Rp 2.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item8', -1)">-</button><span class="counter" id="qty-item8">0</span><button class="btn-step" onclick="updateQty('item8', 1)">+</button></div></div>
+                <div class="card"><div class="title-area"><h3>Makaroni Ngehe</h3></div><p>Level upgrade, pedasnya makin gak ada obat.</p><div class="price-tag">Rp 3.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item9', -1)">-</button><span class="counter" id="qty-item9">0</span><button class="btn-step" onclick="updateQty('item9', 1)">+</button></div></div>
+                <div class="card"><div class="title-area"><h3>Makaroni Ngehe</h3></div><p>Paket 'Boss Besar', pedasnya bikin tobat sambal.</p><div class="price-tag">Rp 5.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item10', -1)">-</button><span class="counter" id="qty-item10">0</span><button class="btn-step" onclick="updateQty('item10', 1)">+</button></div></div>
+                <div class="card"><div class="title-area"><h3>Keju Aroma</h3></div><p>Kriuknya dapet, kejunya bikin ketagihan awet.</p><div class="price-tag">Rp 1.500</div><div class="stepper"><button class="btn-step" onclick="updateQty('item15', -1)">-</button><span class="counter" id="qty-item15">0</span><button class="btn-step" onclick="updateQty('item15', 1)">+</button></div></div>
+                <div class="card"><div class="title-area"><h3>Keju Aroma</h3><span class="qty-label">(Isi 4 pcs)</span></div><p>Sekali gigit, dunia serasa milik berdua (sama keju).</p><div class="price-tag">Rp 5.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item16', -1)">-</button><span class="counter" id="qty-item16">0</span><button class="btn-step" onclick="updateQty('item16', 1)">+</button></div></div>
+                
+                <div class="card"><div class="title-area"><h3>Kentang Goreng</h3></div><p>Kentang renyah gurih, cemilan pas saat santai.</p><div class="price-tag">Rp 2.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item17', -1)">-</button><span class="counter" id="qty-item17">0</span><button class="btn-step" onclick="updateQty('item17', 1)">+</button></div></div>
+                <div class="card"><div class="title-area"><h3>Kentang Goreng</h3></div><p>Porsi mantap puas, renyahnya bikin ketagihan.</p><div class="price-tag">Rp 3.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item18', -1)">-</button><span class="counter" id="qty-item18">0</span><button class="btn-step" onclick="updateQty('item18', 1)">+</button></div></div>
+
+                <div class="card"><div class="title-area"><h3>Es Chocolatos</h3></div><p>Cokelatnya kental, dinginnya bikin mental.</p><div class="price-tag">Rp 1.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item11', -1)">-</button><span class="counter" id="qty-item11">0</span><button class="btn-step" onclick="updateQty('item11', 1)">+</button></div></div>
+                <div class="card"><div class="title-area"><h3>Es Goriorio</h3></div><p>Es biskuit legendaris, dinginnya bikin pusing.</p><div class="price-tag">Rp 1.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item12', -1)">-</button><span class="counter" id="qty-item12">0</span><button class="btn-step" onclick="updateQty('item12', 1)">+</button></div></div>
+                
+                <div class="card"><div class="title-area"><h3>Es Kiko</h3></div><p>Es stick legendaris manis, segar mendinginkan suasana.</p><div class="price-tag">Rp 1.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item19', -1)">-</button><span class="counter" id="qty-item19">0</span><button class="btn-step" onclick="updateQty('item19', 1)">+</button></div></div>
+
+                <div class="card"><div class="title-area"><h3>Air Mineral</h3></div><p>Air putih bersih, penetralisir lidah pedas Ngehe.</p><div class="price-tag">Rp 1.000</div><div class="stepper"><button class="btn-step" onclick="updateQty('item13', -1)">-</button><span class="counter" id="qty-item13">0</span><button class="btn-step" onclick="updateQty('item13', 1)">+</button></div></div>
+                <div class="card"><div class="title-area"><h3>Es Batu</h3></div><p>Hanya es batu, buat yang mau mendinginkan hati.</p><div class="price-tag">Rp 1.500</div><div class="stepper"><button class="btn-step" onclick="updateQty('item14', -1)">-</button><span class="counter" id="qty-item14">0</span><button class="btn-step" onclick="updateQty('item14', 1)">+</button></div></div>
             </div>
         </div>
-    </div>
 
+        <div id="cartBar" class="cart-bar">
+            <div class="total-info"><span class="total-amount" id="displayTotal">Rp 0</span></div>
+            <button class="btn-checkout" onclick="showModal()">PESAN <i class="fab fa-whatsapp"></i></button>
+        </div>
+
+        <div id="paymentModal" class="modal">
+            <div class="modal-content">
+                <div id="step-1">
+                    <h3 style="font-family: 'Bangers'; color: var(--dark-blue);">DETAIL PESANAN</h3>
+                    <div class="order-summary" id="orderSummary"></div>
+                    <h3 style="font-family: 'Bangers'; color: var(--dark-blue);">NAMA KAMU</h3>
+                    <input type="text" id="customerName" class="input-nama" placeholder="Tulis namamu..." required>
+                    <h3 style="font-family: 'Bangers'; color: var(--dark-blue);">CARA BAYAR</h3>
+                    <div class="payment-option" onclick="selectPay('CASH', this)">CASH (Tunai)</div>
+                    <div class="payment-option" onclick="selectPay('QRIS', this)">QRIS (Transfer)</div>
+                    <button class="btn-checkout" style="width:100%; margin-top:20px; justify-content:center;" onclick="handleNextStep()">LANJUT</button>
+                    <p style="margin-top:15px; color:#999; font-size:0.8rem; cursor:pointer;" onclick="hideModal()">Batal</p>
+                </div>
+                <div id="step-qris" style="display: none;">
+                    <h3 style="font-family: 'Bangers'; color: var(--primary);">SCAN QRIS</h3>
+                    <img src="WhatsApp Image 2026-04-06 at 00.12.46.jpeg" class="qris-img" onerror="this.src='https://via.placeholder.com/220/1d3557/fff?text=SCAN+QRIS'">
+                    <p style="font-weight: bold;">Total: <span id="qris-total-text"></span></p>
+                    <button class="btn-checkout" style="width:100%; margin-top:20px; justify-content:center;" onclick="finalSend()">KIRIM PESANAN KE WA</button>
+                    <p style="margin-top:15px; color:#999; font-size:0.8rem; cursor:pointer;" onclick="showStep(1)">Kembali</p>
+                </div>
+            </div>
+        </div>
+    </div> <!-- END shop-content -->
+
+    <!-- ORIGINAL JAVASCRIPT LOGIC (Dipertahankan sepenuhnya) -->
     <script>
         const menu = {
             'item1': { name: 'Cireng Ayam', price: 1500 }, 'item2': { name: 'Cireng Cokelat', price: 1500 },
@@ -228,6 +282,228 @@
             
             setTimeout(() => { window.open(finalURL, '_blank'); hideModal(); }, 1000);
         }
+    </script>
+
+    <!-- NEW 3D JAVASCRIPT ENGINE (AAA Style) -->
+    <script>
+        // --- 1. CORE SETUP ---
+        const scene = new THREE.Scene();
+        // Menggunakan warna background biru gelap khas branding WMG (#1d3557)
+        scene.fog = new THREE.FogExp2(0x0a1421, 0.0015); 
+        
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        
+        // Render canvas di background
+        document.getElementById('webgl-bg').appendChild(renderer.domElement);
+
+        // --- 2. AAA WIREFRAME INTRO (The "Core") ---
+        const coreGeometry = new THREE.IcosahedronGeometry(15, 2);
+        // Menggunakan warna sekunder WMG (kuning/orange #ffb703) untuk core
+        const coreMaterial = new THREE.MeshBasicMaterial({ 
+            color: 0xffb703, wireframe: true, transparent: true, opacity: 0 
+        });
+        const core = new THREE.Mesh(coreGeometry, coreMaterial);
+        scene.add(core);
+
+        // --- 3. CURSOR PARTICLES (Constellation) ---
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 3000;
+        const posArray = new Float32Array(particlesCount * 3);
+        const velocityArray = [];
+
+        for(let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 150;
+        }
+        for(let i = 0; i < particlesCount; i++) {
+            velocityArray.push({
+                x: (Math.random() - 0.5) * 0.02,
+                y: (Math.random() - 0.5) * 0.02,
+                z: (Math.random() - 0.5) * 0.02
+            });
+        }
+        
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        
+        // Custom texture
+        const canvas = document.createElement('canvas');
+        canvas.width = 16; canvas.height = 16;
+        const context = canvas.getContext('2d');
+        const gradient = context.createRadialGradient(8, 8, 0, 8, 8, 8);
+        gradient.addColorStop(0, 'rgba(255,255,255,1)');
+        gradient.addColorStop(1, 'rgba(255,255,255,0)');
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, 16, 16);
+        const particleTexture = new THREE.CanvasTexture(canvas);
+
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.3, map: particleTexture, transparent: true,
+            blending: THREE.AdditiveBlending, depthWrite: false, color: 0xe63946 // Warna primer WMG (merah)
+        });
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        // --- 4. BUTTERFLIES (Flock) ---
+        const butterflies = [];
+        const butterflyGeo = new THREE.PlaneGeometry(0.5, 0.5, 2, 2);
+        const butterflyMat = new THREE.MeshBasicMaterial({ 
+            color: 0xffffff, side: THREE.DoubleSide, transparent: true, opacity: 0.8,
+            wireframe: true
+        });
+
+        function spawnButterfly(x, y) {
+            const b = new THREE.Mesh(butterflyGeo, butterflyMat);
+            const vector = new THREE.Vector3(x, y, 0.5);
+            vector.unproject(camera);
+            const dir = vector.sub(camera.position).normalize();
+            const distance = -camera.position.z / dir.z;
+            const pos = camera.position.clone().add(dir.multiplyScalar(distance));
+            
+            b.position.copy(pos);
+            b.userData = {
+                angle: Math.random() * Math.PI * 2,
+                speed: 0.02 + Math.random() * 0.03,
+                flapSpeed: 0.2 + Math.random() * 0.2,
+                life: 1.0
+            };
+            scene.add(b);
+            butterflies.push(b);
+        }
+
+        // --- 5. INTERACTION & PARALLAX ---
+        let mouseX = 0;
+        let mouseY = 0;
+        let targetX = 0;
+        let targetY = 0;
+        
+        const windowHalfX = window.innerWidth / 2;
+        const windowHalfY = window.innerHeight / 2;
+
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX - windowHalfX);
+            mouseY = (event.clientY - windowHalfY);
+            
+            const normX = (event.clientX / window.innerWidth) * 2 - 1;
+            const normY = -(event.clientY / window.innerHeight) * 2 + 1;
+            
+            if (Math.random() > 0.95) spawnButterfly(normX, normY);
+        });
+
+        // Hover Effect on Title
+        const title = document.getElementById('trigger');
+        title.addEventListener('mouseenter', () => {
+            gsap.to(particlesMaterial.color, { r: 1, g: 0.7, b: 0.01, duration: 1 }); // Berubah kuning
+            coreMaterial.wireframe = false;
+            coreMaterial.opacity = 0.1;
+        });
+        title.addEventListener('mouseleave', () => {
+            gsap.to(particlesMaterial.color, { r: 0.9, g: 0.22, b: 0.27, duration: 1 }); // Kembali merah
+            coreMaterial.wireframe = true;
+            coreMaterial.opacity = 0.3;
+        });
+
+        // --- 6. ANIMATION & AAA INTRO SEQUENCE ---
+        camera.position.z = 5;
+
+        // Cinematic Intro Play
+        setTimeout(() => {
+            document.getElementById('intro-screen').style.opacity = '0';
+            
+            gsap.to(coreMaterial, { opacity: 0.3, duration: 2, ease: "power2.inOut" });
+            gsap.fromTo(camera.position, 
+                { z: 0.1, y: -20 }, 
+                { z: 40, y: 0, duration: 3.5, ease: "power3.out" }
+            );
+            
+            setTimeout(() => {
+                document.getElementById('ui-layer').style.opacity = '1';
+                document.getElementById('intro-screen').style.display = 'none';
+            }, 2000);
+            
+        }, 1500);
+
+        // Transition from Intro to Shop
+        title.addEventListener('click', () => {
+            // Animasi kamera terbang menjauh
+            gsap.to(camera.position, { z: 120, y: 10, duration: 2, ease: "power2.inOut" });
+            
+            // Hilangkan UI Layer
+            const uiLayer = document.getElementById('ui-layer');
+            uiLayer.style.opacity = '0';
+            uiLayer.style.pointerEvents = 'none';
+            
+            // Tampilkan Shop Content
+            setTimeout(() => {
+                const shop = document.getElementById('shop-content');
+                shop.style.opacity = '1';
+                shop.style.pointerEvents = 'auto';
+            }, 800);
+        });
+
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const elapsedTime = clock.getElapsedTime();
+
+            // Parallax
+            targetX = mouseX * 0.001;
+            targetY = mouseY * 0.001;
+            
+            camera.position.x += (targetX * 20 - camera.position.x) * 0.05;
+            camera.position.y += (-targetY * 20 - camera.position.y) * 0.05;
+            camera.lookAt(scene.position);
+
+            // Core rotation
+            core.rotation.y += 0.002;
+            core.rotation.x += 0.001;
+
+            // Particles logic
+            const positions = particlesGeometry.attributes.position.array;
+            for(let i = 0; i < particlesCount; i++) {
+                let i3 = i * 3;
+                positions[i3] += velocityArray[i].x;
+                positions[i3+1] += velocityArray[i].y;
+                positions[i3+2] += velocityArray[i].z;
+                
+                positions[i3] -= targetX * 0.1;
+                positions[i3+1] -= targetY * 0.1;
+                
+                if (Math.abs(positions[i3]) > 75) positions[i3] *= -0.9;
+                if (Math.abs(positions[i3+1]) > 75) positions[i3+1] *= -0.9;
+                if (Math.abs(positions[i3+2]) > 75) positions[i3+2] *= -0.9;
+            }
+            particlesGeometry.attributes.position.needsUpdate = true;
+            particlesMesh.rotation.y = -targetX * 0.5;
+
+            // Butterflies animation
+            for (let i = butterflies.length - 1; i >= 0; i--) {
+                const b = butterflies[i];
+                b.userData.angle += 0.05;
+                b.position.y += b.userData.speed;
+                b.position.x += Math.sin(b.userData.angle) * 0.02;
+                b.scale.y = Math.sin(elapsedTime * 10 * b.userData.flapSpeed);
+                b.userData.life -= 0.005;
+                b.material.opacity = b.userData.life;
+                
+                if (b.userData.life <= 0) {
+                    scene.remove(b);
+                    butterflies.splice(i, 1);
+                }
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
     </script>
 </body>
 </html>
